@@ -1,20 +1,76 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const passport = require('passport');
+const mongoose = require("mongoose");
+const config = require("./config/index");
+const cors = require("cors");
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const {
+  facebookPassportConfig,
+  googlePassportConfig
+} = require('./config/passportConfig');
+const { googleAuth } = require('./utils/socialProvidersAuth');
+facebookPassportConfig();
+googlePassportConfig();
 
-var app = express();
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
 
-app.use(logger('dev'));
+//import middleware
+const errorHandler = require('./middleware/errorHandler');
+const passportJWT = require('./middleware/passportJWT');
+
+const app = express();
+app.use(cors());
+mongoose.connect(config.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
+});
+
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
+app.use(errorHandler);
+
+// social login
+app.get('/auth/facebook',
+  passport.authenticate('facebook'));
+app.get(
+  '/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    session: false,
+    failureRedirect: 'http://localhost:3000',
+  }),
+  (req, res) => {
+    const user = req.user;
+    // Handle user with database --> new user (sign up --> create new user) / signin
+    // Send jwt token back to frontend --> response / res.cookies
+
+    res.redirect('http://localhost:3000')
+  }
+)
+
+app.get('/auth/google', passport.authenticate('google', {
+  scope: ['profile','email']
+}));
+
+app.get(
+  '/auth/google/callback',
+  passport.authenticate('google', {
+    session: false,
+    failureRedirect: 'http://localhost:3000',
+  }),
+  googleAuth
+);
+// end social login
 
 module.exports = app;
