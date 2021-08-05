@@ -12,7 +12,7 @@ const {
   googlePassportConfig
 } = require('./config/passportConfig');
 const { googleAuth } = require('./utils/socialProvidersAuth');
-facebookPassportConfig();
+// facebookPassportConfig();
 googlePassportConfig();
 
 const indexRouter = require("./routes/index");
