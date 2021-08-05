@@ -17,6 +17,7 @@ googlePassportConfig();
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+const checkoutRouter = require("./routes/checkout");
 
 //import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -39,6 +40,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/checkout", checkoutRouter);
 app.use(errorHandler);
 
 // social login
