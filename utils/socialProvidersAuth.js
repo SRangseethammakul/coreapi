@@ -42,6 +42,6 @@ exports.googleAuth = async (req, res) => {
       res.cookie('access_token', token);
       res.redirect(config.URL_REDIRECT);
     } catch (error) {
-      res.redirect(config.URL_REDIRECT)
+      res.redirect(config.URL_REDIRECT);
     }
   }
