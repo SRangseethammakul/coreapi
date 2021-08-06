@@ -9,5 +9,6 @@ module.exports = {
     JWT_SECRET : process.env.JWT_SECRET,
     URL_CALLBACK : process.env.URL_CALLBACK,
     OMISE_PUBLIC : process.env.OMISE_PUBLIC,
-    OMISE_SECRET : process.env.OMISE_SECRET
+    OMISE_SECRET : process.env.OMISE_SECRET,
+    URL_REDIRECT : process.env.URL_REDIRECT
 }

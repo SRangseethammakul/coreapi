@@ -40,8 +40,8 @@ exports.googleAuth = async (req, res) => {
       //decode expiresIn
       // const expires_in = jwt.decode(token);
       res.cookie('access_token', token);
-      res.redirect('http://localhost:3000/');
+      res.redirect(config.URL_REDIRECT);
     } catch (error) {
-      res.redirect('http://localhost:3000/')
+      res.redirect(config.URL_REDIRECT)
     }
   }
