@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const router = express.Router();
+const passportJWT = require('../middleware/passportJWT');
 const userController = require('../controllers/userController');
 
 
@@ -14,5 +15,6 @@ router.post('/register', [
   body('email').not().isEmpty().withMessage('please insert email').isEmail().withMessage('email format invalid'),
   body('password').not().isEmpty().withMessage('please insert password').isLength({min:8}).withMessage('password length 8')
 ], userController.register);
+router.get('/profile', [passportJWT.isLogin], userController.profile);
 
 module.exports = router;
