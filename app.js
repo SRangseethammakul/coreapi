@@ -18,13 +18,14 @@ googlePassportConfig();
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const checkoutRouter = require("./routes/checkout");
+const productRouter = require("./routes/product");
 
 //import middleware
 const errorHandler = require('./middleware/errorHandler');
 const passportJWT = require('./middleware/passportJWT');
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: config.URL_REDIRECT, credentials: true }));
 mongoose.connect(config.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -41,6 +42,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/checkout", checkoutRouter);
+app.use("/product", productRouter);
 app.use(errorHandler);
 
 // social login
@@ -69,7 +71,7 @@ app.get(
   '/auth/google/callback',
   passport.authenticate('google', {
     session: false,
-    failureRedirect: 'http://localhost:3000',
+    failureRedirect: config.URL_REDIRECT,
   }),
   googleAuth
 );
