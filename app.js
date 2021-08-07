@@ -25,7 +25,7 @@ const errorHandler = require('./middleware/errorHandler');
 const passportJWT = require('./middleware/passportJWT');
 
 const app = express();
-app.use(cors({ origin: config.URL_REDIRECT, credentials: true }));
+app.use(cors());
 mongoose.connect(config.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
