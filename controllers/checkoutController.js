@@ -38,7 +38,7 @@ exports.internetBanking = async (req, res, next) => {
       amount,
       source: token,
       currency: "thb",
-      return_uri: "http://localhost:3000/message",
+      return_uri: config.URL_REDIRECT,
     });
     console.log(charge);
     return res.status(200).json({ authorizeUri: charge.authorize_uri });
