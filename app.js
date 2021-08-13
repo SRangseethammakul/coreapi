@@ -19,6 +19,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const checkoutRouter = require("./routes/checkout");
 const productRouter = require("./routes/product");
+const categoryRouter = require("./routes/category");
 
 //import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -43,6 +44,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/checkout", checkoutRouter);
 app.use("/product", productRouter);
+app.use("/category", categoryRouter);
 app.use(errorHandler);
 
 // social login
