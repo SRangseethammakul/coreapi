@@ -9,5 +9,5 @@ router.post('/create/type', productController.insertType);
 router.post('/insertProduct', productController.insertProduct);
 router.get('/product', productController.getProduct);
 router.get('/product/:id', productController.getProductWithProduct);
-
+router.delete('/product/:id', productController.destroy);
 module.exports = router;

@@ -1,8 +1,17 @@
 const Category = require("../models/category");
 const Product = require("../models/product");
+const config = require("../config/index");
 exports.index = async (req, res, next) => {
   try {
-    const categories = await Category.find().select('name');
+    const resp = await Category.find().select('name isUsed photo');
+    const categories = await resp.map((item, index) => {
+      return {
+        id: item._id,
+        name: item.name,
+        isUsed : item.isUsed,
+        photo: config.DOMAIN_GOOGLE_URL + "/" + item.photo,
+      };
+    })
     return res.status(200).json({
       data: categories,
     });

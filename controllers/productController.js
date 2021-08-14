@@ -109,3 +109,22 @@ exports.getProductWithProduct = async (req, res, next) => {
     next(error);
   }
 };
+exports.destroy = async (req, res, next) => {
+  try{
+      const { id } = req.params;
+      const staff = await Product.deleteOne({_id:id});
+      if(staff.deletedCount === 0){
+          throw new Error('ไม่สามารถลบข้อมูลได้');
+      }else {
+          res.status(200).json({
+              message: 'deleted'
+          });
+      }
+  }catch(error){
+      res.status(400).json({
+          error : {
+              message : 'Error ' + error.message
+          }
+      });
+  }
+}

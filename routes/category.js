@@ -5,6 +5,6 @@ const categoryController = require('../controllers/categoryController');
 
 router.get('/', categoryController.index);
 router.get('/:id', categoryController.getShopWithMenu);
-router.post('/create', categoryController.insert);
+router.post('/', categoryController.insert);
 
 module.exports = router;
