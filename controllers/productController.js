@@ -1,7 +1,9 @@
 const User = require("../models/user");
 const { validationResult } = require("express-validator");
+const cloudinary = require("cloudinary").v2;
 const jwt = require("jsonwebtoken");
 const config = require("../config/index");
+const cloudinary_config = require("../config/cloudinary");
 const Category = require("../models/category");
 const Product = require("../models/product");
 const data = [
@@ -79,7 +81,14 @@ exports.insertType = async (req, res, next) => {
 };
 exports.insertProduct = async (req, res, next) => {
   try {
-    let newProduct = new Product(req.body);
+    const { productName, price, items, category, photo } = req.body;
+    let newProduct = new Product({
+      productName,
+      price,
+      items,
+      category,
+      photo: await saveImageToCloudinary(photo),
+    });
     await newProduct.save();
     res.status(201).json({
       data: "Save success",
@@ -90,9 +99,11 @@ exports.insertProduct = async (req, res, next) => {
 };
 exports.getProduct = async (req, res, next) => {
   try {
-    const products = await Product.find().populate('category', 'name -_id').sort('-_id'); //parameter ตัวแรก ต้อง match กับ model ที่ ref ไว้
+    const products = await Product.find()
+      .populate("category", "name -_id")
+      .sort("-_id"); //parameter ตัวแรก ต้อง match กับ model ที่ ref ไว้
     res.status(200).json({
-        data: products
+      data: products,
     });
   } catch (error) {
     next(error);
@@ -101,30 +112,41 @@ exports.getProduct = async (req, res, next) => {
 exports.getProductWithProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id).populate('category', 'name -_id').sort('-_id'); //parameter ตัวแรก ต้อง match กับ model ที่ ref ไว้
+    const product = await Product.findById(id)
+      .populate("category", "name -_id")
+      .sort("-_id"); //parameter ตัวแรก ต้อง match กับ model ที่ ref ไว้
     res.status(200).json({
-        data: product
+      data: product,
     });
   } catch (error) {
     next(error);
   }
 };
 exports.destroy = async (req, res, next) => {
-  try{
-      const { id } = req.params;
-      const staff = await Product.deleteOne({_id:id});
-      if(staff.deletedCount === 0){
-          throw new Error('ไม่สามารถลบข้อมูลได้');
-      }else {
-          res.status(200).json({
-              message: 'deleted'
-          });
-      }
-  }catch(error){
-      res.status(400).json({
-          error : {
-              message : 'Error ' + error.message
-          }
+  try {
+    const { id } = req.params;
+    const staff = await Product.deleteOne({ _id: id });
+    if (staff.deletedCount === 0) {
+      throw new Error("ไม่สามารถลบข้อมูลได้");
+    } else {
+      res.status(200).json({
+        message: "deleted",
       });
+    }
+  } catch (error) {
+    res.status(400).json({
+      error: {
+        message: "Error " + error.message,
+      },
+    });
   }
-}
+};
+const saveImageToCloudinary = async (baseImage) => {
+  cloudinary.config({
+    cloud_name: cloudinary_config.CLOUD_NAME,
+    api_key: cloudinary_config.CLOUD_KEY,
+    api_secret: cloudinary_config.CLOUD_SECRET,
+  });
+  const uploadResponse = await cloudinary.uploader.upload(baseImage, {});
+  return uploadResponse.secure_url;
+};
