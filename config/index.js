@@ -11,5 +11,6 @@ module.exports = {
     DOMAIN_GOOGLE_URL : process.env.DOMAIN_GOOGLE_URL,
     OMISE_PUBLIC : process.env.OMISE_PUBLIC,
     OMISE_SECRET : process.env.OMISE_SECRET,
-    URL_REDIRECT : process.env.URL_REDIRECT
+    URL_REDIRECT : process.env.URL_REDIRECT,
+    AIRVISUAL : process.env.AIRVISUAL
 }

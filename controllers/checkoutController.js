@@ -18,10 +18,17 @@ exports.index = async (req, res, next) => {
       customer: customer.id,
     });
     console.log(charge);
-    return res.status(200).json({
-      amount: charge.amount,
-      status: charge.status,
-    });
+    if (charge.paid) {
+      return res.status(200).json({
+        amount: charge.amount,
+        status: charge.status,
+      });
+    } else {
+      const error = new Error(charge.failure_code);
+      error.statusCode = 422;
+      error.validation = errors.array();
+      throw error;
+    }
   } catch (error) {
     res.status(400).json({
       error: {

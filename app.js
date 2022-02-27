@@ -6,7 +6,7 @@ const passport = require('passport');
 const mongoose = require("mongoose");
 const config = require("./config/index");
 const cors = require("cors");
-
+const helmet = require("helmet");
 const {
   facebookPassportConfig,
   googlePassportConfig
@@ -20,6 +20,7 @@ const usersRouter = require("./routes/users");
 const checkoutRouter = require("./routes/checkout");
 const productRouter = require("./routes/product");
 const categoryRouter = require("./routes/category");
+const checkEnvRouter = require("./routes/checkEnv");
 
 //import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -27,6 +28,9 @@ const passportJWT = require('./middleware/passportJWT');
 
 const app = express();
 app.use(cors());
+app.use(helmet());
+//init passport
+app.use(passport.initialize());
 mongoose.connect(config.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -35,7 +39,11 @@ mongoose.connect(config.MONGODB_URI, {
 });
 
 app.use(logger("dev"));
-app.use(express.json());
+app.use(
+  express.json({
+    limit: "50mb",
+  })
+);
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
@@ -45,6 +53,7 @@ app.use("/users", usersRouter);
 app.use("/checkout", checkoutRouter);
 app.use("/product", productRouter);
 app.use("/category", categoryRouter);
+app.use("/checkEnv", checkEnvRouter);
 app.use(errorHandler);
 
 // social login
